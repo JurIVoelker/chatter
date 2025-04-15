@@ -1,0 +1,22 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model message {
+  id          Int    @id @default(autoincrement())
+  messageFrom String
+  messageAt   String
+  message     String
+}
+
+model userHasCurrentData {
+  id             Int     @id @default(autoincrement())
+  hasCurrentData Boolean
+  user           String  @unique
+}

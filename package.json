@@ -7,14 +7,24 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db:migrate": "npx prisma migrate dev --name init --schema ./src/prisma/schema.prisma"
+    "db:prod-migrate": "npx prisma migrate dev --name init --schema ./src/prisma/prod.prisma",
+    "db:dev-migrate": "npx prisma migrate dev --name init --schema ./src/prisma/dev.prisma",
+    "minio:import-migrations": "npx tsx ./src/prisma/scripts/importMigrations.ts",
+    "minio:export-migrations": "npx tsx ./src/prisma/scripts/exportMigrations.ts",
+    "deploy:init": "npx prisma migrate reset --schema ./src/prisma/prod.prisma --force && npm run db:prod-migrate && npm run minio:export-migrations && npm run build",
+    "deploy:prod": "npm run minio:import-migrations && npm run db:prod-migrate && npm run minio:export-migrations && npm run build"
   },
   "dependencies": {
     "@prisma/client": "^6.6.0",
+    "@types/archiver": "^6.0.3",
+    "@types/unzipper": "^0.10.11",
+    "archiver": "^7.0.1",
+    "minio": "^8.0.5",
     "next": "15.3.0",
     "prisma": "^6.6.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "unzipper": "^0.12.3"
   },
   "devDependencies": {
     "typescript": "^5",
