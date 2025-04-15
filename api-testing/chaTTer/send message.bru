@@ -1,0 +1,15 @@
+meta {
+  name: send message
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{url}}/message
+  body: text
+  auth: inherit
+}
+
+body:text {
+  "Piet" (11:11) > HALLO DU KEK MEINE GURKEN BRENNEN 
+}

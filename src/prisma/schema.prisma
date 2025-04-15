@@ -1,0 +1,22 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
+}
+
+datasource db2 {
+  provider = "sqlite"
+  url      = "file:./db/database.db"
+}
+
+model message {
+  id          Int    @id @default(autoincrement())
+  messageFrom String
+  messageAt   String
+  message     String
+}
+
+model userHasCurrentData {
+  id             Int     @id @default(autoincrement())
+  hasCurrentData Boolean
+  user           String  @unique
+}
