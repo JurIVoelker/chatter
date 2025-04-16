@@ -119,10 +119,17 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(
       {
-        messages: messages.map(
-          (message) =>
-            `"${message.messageFrom}" (${message.messageAt}): ${message.message}`
-        ),
+        messages: messages
+          .filter(
+            (m) =>
+              m.message.includes("!beep") ||
+              m.message.includes("?essen") ||
+              m.message.includes("!essen")
+          )
+          .map(
+            (message) =>
+              `"${message.messageFrom}" (${message.messageAt}): ${message.message}`
+          ),
       },
       { status: 200 }
     );
