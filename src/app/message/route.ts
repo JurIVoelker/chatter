@@ -28,6 +28,11 @@ export async function POST(req: NextRequest) {
       data: {
         hasCurrentData: false,
       },
+      where: {
+        user: {
+          not: user,
+        },
+      },
     });
   }
 
