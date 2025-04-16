@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
   const splitText = text.split(" ");
   const user = splitText[0].split('"')[1];
   const time = splitText[1].split("(")[1].split(")")[0];
-  const message = splitText.slice(3, splitText.length).join(" ");
+  const message = splitText.slice(3, splitText.length).join(" ").trim();
   if (!user || !time || !message) {
     return new Response("Invalid request", { status: 400 });
   }
