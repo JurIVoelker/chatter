@@ -19,11 +19,17 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  await prisma.userHasCurrentData.updateMany({
-    data: {
-      hasCurrentData: false,
-    },
-  });
+  if (
+    !message.includes("!beep") &&
+    !message.includes("!essen") &&
+    !message.includes("?essen")
+  ) {
+    await prisma.userHasCurrentData.updateMany({
+      data: {
+        hasCurrentData: false,
+      },
+    });
+  }
 
   if (message === "!essen") {
     const messages = (
