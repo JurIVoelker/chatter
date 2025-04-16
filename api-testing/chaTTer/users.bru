@@ -1,17 +1,17 @@
 meta {
-  name: get message
+  name: users
   type: http
-  seq: 3
+  seq: 4
 }
 
 get {
-  url: {{url}}/message?user=test
+  url: {{url}}/users?user=JuriJoe
   body: text
   auth: inherit
 }
 
 params:query {
-  user: test
+  user: JuriJoe
 }
 
 body:text {
