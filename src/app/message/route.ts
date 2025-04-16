@@ -1,4 +1,5 @@
 import { prisma } from "@/prisma/prisma";
+import { asyncLog } from "@/utils/logUtils";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -24,6 +25,8 @@ export async function POST(req: NextRequest) {
     },
   });
 
+  await asyncLog(`New message from ${user} at ${time}: ${message}`);
+
   return new Response("Message saved successfully", { status: 200 });
 }
 
@@ -31,6 +34,8 @@ export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
   const user = searchParams.get("user");
   if (!user) return new Response("User not found", { status: 400 });
+
+  await asyncLog(`User ${user} requested data`);
 
   let userData = await prisma.userHasCurrentData.findFirst({
     where: {
@@ -62,6 +67,9 @@ export async function GET(req: NextRequest) {
           message: `!beep ${user}`,
         },
       });
+
+      await asyncLog(`User ${user} got beeped`);
+
       return new Response("beep");
     }
 
@@ -75,6 +83,8 @@ export async function GET(req: NextRequest) {
         hasCurrentData: true,
       },
     });
+    await asyncLog(`User ${user} got messages`);
+
     return NextResponse.json(
       {
         messages: messages.map(
