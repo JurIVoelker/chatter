@@ -50,16 +50,20 @@ export async function GET(req: NextRequest) {
   }
 
   if (!userData?.hasCurrentData) {
-    const messages = (
-      await prisma.message.findMany({
-        orderBy: {
-          id: "desc",
+    const messages = await prisma.message.findMany({
+      orderBy: {
+        id: "desc",
+      },
+    });
+
+    if (messages.some((message) => message.message === `!beep ${user}`)) {
+      await prisma.message.deleteMany({
+        where: {
+          message: `!beep ${user}`,
         },
-      })
-    ).map(
-      (message) =>
-        `"${message.messageFrom}" (${message.messageAt}): ${message.message}`
-    );
+      });
+      return new Response("beep");
+    }
 
     await prisma.userHasCurrentData.updateMany({
       where: {
@@ -71,7 +75,15 @@ export async function GET(req: NextRequest) {
         hasCurrentData: true,
       },
     });
-    return NextResponse.json({ messages: messages }, { status: 200 });
+    return NextResponse.json(
+      {
+        messages: messages.map(
+          (message) =>
+            `"${message.messageFrom}" (${message.messageAt}): ${message.message}`
+        ),
+      },
+      { status: 200 }
+    );
   }
 
   return new Response("ggez", { status: 200 });
