@@ -59,6 +59,33 @@ export async function GET(req: NextRequest) {
 
   await asyncLog(`User ${user} requested data`);
 
+  const messages = await prisma.message.findMany({
+    orderBy: {
+      id: "desc",
+    },
+  });
+
+  if (messages.some((message) => message.message === `!beep ${user}`)) {
+    await prisma.message.deleteMany({
+      where: {
+        message: `!beep ${user}`,
+      },
+    });
+
+    await asyncLog(`User ${user} got beeped`);
+
+    return new Response("beep");
+  }
+
+  if (messages.some((message) => message.message === `?essen ${user}`)) {
+    await prisma.message.deleteMany({
+      where: {
+        message: `?essen ${user}`,
+      },
+    });
+    return new Response("essen");
+  }
+
   let userData = await prisma.userHasCurrentData.findFirst({
     where: {
       user: {
@@ -77,33 +104,6 @@ export async function GET(req: NextRequest) {
   }
 
   if (!userData?.hasCurrentData) {
-    const messages = await prisma.message.findMany({
-      orderBy: {
-        id: "desc",
-      },
-    });
-
-    if (messages.some((message) => message.message === `!beep ${user}`)) {
-      await prisma.message.deleteMany({
-        where: {
-          message: `!beep ${user}`,
-        },
-      });
-
-      await asyncLog(`User ${user} got beeped`);
-
-      return new Response("beep");
-    }
-
-    if (messages.some((message) => message.message === `?essen ${user}`)) {
-      await prisma.message.deleteMany({
-        where: {
-          message: `?essen ${user}`,
-        },
-      });
-      return new Response("essen");
-    }
-
     await prisma.userHasCurrentData.updateMany({
       where: {
         user: {
