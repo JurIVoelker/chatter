@@ -25,6 +25,28 @@ export async function POST(req: NextRequest) {
     },
   });
 
+  if (message === "!essen") {
+    const messages = (
+      await prisma.userHasCurrentData.findMany({
+        select: { user: true },
+      })
+    )
+      .filter((u) => u.user !== user)
+      .map((u) => ({
+        messageFrom: user,
+        message: "?essen " + u.user,
+        messageAt: "??:??",
+      }));
+
+    await prisma.message.createMany({ data: messages });
+
+    await prisma.message.deleteMany({
+      where: {
+        message: `!essen`,
+      },
+    });
+  }
+
   await asyncLog(`New message from ${user} at ${time}: ${message}`);
 
   return new Response("Message saved successfully", { status: 200 });
@@ -73,6 +95,15 @@ export async function GET(req: NextRequest) {
       return new Response("beep");
     }
 
+    if (messages.some((message) => message.message === `?essen ${user}`)) {
+      await prisma.message.deleteMany({
+        where: {
+          message: `?essen ${user}`,
+        },
+      });
+      return new Response("essen");
+    }
+
     await prisma.userHasCurrentData.updateMany({
       where: {
         user: {
@@ -83,6 +114,7 @@ export async function GET(req: NextRequest) {
         hasCurrentData: true,
       },
     });
+
     await asyncLog(`User ${user} got messages`);
 
     return NextResponse.json(
