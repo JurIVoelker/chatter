@@ -122,9 +122,11 @@ export async function GET(req: NextRequest) {
         messages: messages
           .filter(
             (m) =>
-              m.message.includes("!beep") ||
-              m.message.includes("?essen") ||
-              m.message.includes("!essen")
+              !(
+                m.message.includes("!beep") ||
+                m.message.includes("?essen") ||
+                m.message.includes("!essen")
+              )
           )
           .map(
             (message) =>
