@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     const readText = splitMessage.slice(2, splitMessage.length).join(" ");
     await prisma.readTo.create({
       data: {
-        message: readText,
+        message: `Neue Nachricht von ${user}... ${readText}`,
         user: readTo,
       },
     });
