@@ -139,6 +139,7 @@ export async function GET(req: NextRequest) {
                 m.message.includes("!essen")
               )
           )
+          .slice(0, 20)
           .map(
             (message) =>
               `"${message.messageFrom}" (${message.messageAt}): ${message.message}`
