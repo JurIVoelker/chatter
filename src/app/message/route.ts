@@ -11,6 +11,20 @@ export async function POST(req: NextRequest) {
   if (!user || !time || !message) {
     return new Response("Invalid request", { status: 400 });
   }
+
+  if (message.startsWith("!read")) {
+    const splitMessage = message.split(" ");
+    const readTo = splitMessage[1];
+    const readText = splitMessage.slice(2, splitMessage.length).join(" ");
+    await prisma.readTo.create({
+      data: {
+        message: readText,
+        user: readTo,
+      },
+    });
+    return new Response(`Read "${readText}" to "${readTo}"`, { status: 200 });
+  }
+
   await prisma.message.create({
     data: {
       message,
@@ -67,6 +81,21 @@ export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
   const user = searchParams.get("user");
   if (!user) return new Response("User not found", { status: 400 });
+
+  const readTo = await prisma.readTo.findFirst({
+    where: {
+      user,
+    },
+  });
+
+  if (readTo) {
+    await prisma.readTo.delete({
+      where: {
+        id: readTo.id,
+      },
+    });
+    return NextResponse.json({ read: readTo.message });
+  }
 
   await asyncLog(`User ${user} requested data`);
 
@@ -136,7 +165,8 @@ export async function GET(req: NextRequest) {
               !(
                 m.message.includes("!beep") ||
                 m.message.includes("?essen") ||
-                m.message.includes("!essen")
+                m.message.includes("!essen") ||
+                m.message.includes("!read")
               )
           )
           .slice(0, 20)

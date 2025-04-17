@@ -20,3 +20,9 @@ model userHasCurrentData {
   hasCurrentData Boolean
   user           String  @unique
 }
+
+model readTo {
+  id      Int    @id @default(autoincrement())
+  user    String @unique
+  message String
+}
