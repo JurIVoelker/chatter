@@ -26,3 +26,9 @@ model readTo {
   user    String @unique
   message String
 }
+
+model imageTo {
+  id   Int    @id @default(autoincrement())
+  user String @unique
+  path String
+}

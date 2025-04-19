@@ -97,6 +97,21 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ read: readTo.message });
   }
 
+  const imageTo = await prisma.imageTo.findFirst({
+    where: {
+      user,
+    },
+  });
+
+  if (imageTo) {
+    await prisma.imageTo.delete({
+      where: {
+        id: imageTo.id,
+      },
+    });
+    return NextResponse.json({ image: imageTo.path });
+  }
+
   await asyncLog(`User ${user} requested data`);
 
   const messages = await prisma.message.findMany({
