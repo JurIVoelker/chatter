@@ -23,12 +23,12 @@ model userHasCurrentData {
 
 model readTo {
   id      Int    @id @default(autoincrement())
-  user    String @unique
+  user    String
   message String
 }
 
 model imageTo {
   id   Int    @id @default(autoincrement())
-  user String @unique
+  user String
   path String
 }
