@@ -37,3 +37,9 @@ model updateNotification {
   id   Int    @id @default(autoincrement())
   user String
 }
+
+model animationTo {
+  id   Int    @id @default(autoincrement())
+  user String
+  name String
+}

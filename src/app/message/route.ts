@@ -33,6 +33,24 @@ export async function POST(req: NextRequest) {
     return new Response("Created notification successfully", { status: 200 });
   }
 
+  if (message.startsWith("!animation")) {
+    const messageSplit = message.split(" ");
+    const to = messageSplit[1];
+    const name = messageSplit[2];
+    if (!to || !name) {
+      return new Response("Bad Request", { status: 400 });
+    }
+
+    await prisma.animationTo.create({
+      data: {
+        name,
+        user: to,
+      },
+    });
+
+    return new Response("Created animation successfully", { status: 200 });
+  }
+
   await prisma.message.create({
     data: {
       message,
@@ -103,6 +121,19 @@ export async function GET(req: NextRequest) {
       },
     });
     return new Response("update", { status: 200 });
+  }
+
+  const animation = await prisma.animationTo.findFirst({
+    where: {
+      user,
+    },
+  });
+
+  if (animation) {
+    await prisma.animationTo.delete({
+      where: { id: animation.id },
+    });
+    return new Response(animation.name);
   }
 
   const readTo = await prisma.readTo.findFirst({
