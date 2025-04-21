@@ -25,6 +25,14 @@ export async function POST(req: NextRequest) {
     return new Response(`Read "${readText}" to "${readTo}"`, { status: 200 });
   }
 
+  if (message.startsWith("!update")) {
+    const users = await prisma.userHasCurrentData.findMany();
+    await prisma.updateNotification.createMany({
+      data: users.map((u) => ({ user: u.user })),
+    });
+    return new Response("Created notification successfully", { status: 200 });
+  }
+
   await prisma.message.create({
     data: {
       message,
@@ -81,6 +89,21 @@ export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
   const user = searchParams.get("user");
   if (!user) return new Response("User not found", { status: 400 });
+
+  const update = await prisma.updateNotification.findFirst({
+    where: {
+      user,
+    },
+  });
+
+  if (update) {
+    await prisma.updateNotification.delete({
+      where: {
+        id: update.id,
+      },
+    });
+    return new Response("update", { status: 200 });
+  }
 
   const readTo = await prisma.readTo.findFirst({
     where: {
