@@ -32,3 +32,8 @@ model imageTo {
   user String
   path String
 }
+
+model updateNotification {
+  id   Int    @id @default(autoincrement())
+  user String
+}
